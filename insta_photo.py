@@ -1,6 +1,10 @@
 import requests
 import os
 from pprint import pprint
+from dotenv import load_dotenv
+from instabot import Bot
+from fetch_spacex import fetch_spacex_last
+
 
 
 def fetch_image(filename, url):
@@ -44,8 +48,36 @@ def fetch_hubble_collection(collection):
     collection_images_id = [image['id'] for image in response]
     for prefix, image_id in enumerate(collection_images_id):
         fetch_hubble_image_by_id(image_id, f'_{collection}_{prefix}')
+        print(f'fetch hubble_{collection}_{prefix}')
+
+
+def load_to_insta(login, password, filepath):
+    bot = Bot()
+    bot.login(username=username, password=password)
+    caption = make_caption(filepath)
+    print(f'start loading to instagramm {caption}...')
+    bot.upload_photo(filepath, caption=caption)
+    print('done')
+
+def make_caption(filepath):
+    return os.path.splitext(filepath.split('/')[-1])[0]
+
+
+def get_images_list(path):
+    images_list = []
+    accepted_extensions = ['.png', '.pdf', '.jpg', '.jpeg']
+    for image_name in os.listdir(path):
+        if os.path.splitext(image_name)[1].lower() in accepted_extensions:
+            images_list.append(image_name)
+    return images_list
 
 
 if __name__ == '__main__':
-    collection = 'holiday_cards'
-    fetch_hubble_collection(collection)
+    #collection = 'holiday_cards'
+    #fetch_hubble_collection(collection)
+    load_dotenv()
+    username = os.getenv('INSTA_USER')
+    password = os.getenv('INSTA_PASSWORD')
+    images_list = get_images_list('./image')
+    for image in images_list:
+        load_to_insta(username, password, f'./image/{image}')
