@@ -59,6 +59,7 @@ def load_to_insta(login, password, filepath):
     bot.upload_photo(filepath, caption=caption)
     print('done')
 
+
 def make_caption(filepath):
     return os.path.splitext(filepath.split('/')[-1])[0]
 
