@@ -2,6 +2,7 @@ import requests
 import os
 from fetch_spacex import fetch_image
 from pprint import pprint
+import argparse
 
 
 
@@ -9,8 +10,8 @@ def create_parser():
     parser = argparse.ArgumentParser(
         description='Program fetches images from distinct collection of hubblesite.org'
         'also gets collections names')
-    parser.add_argument('-c', '--get_collections_list', action=store_true)
-    parser.add_argument('-i', '--get_images', action=store_true)
+    parser.add_argument('-c', '--collections', action='store_true')
+    parser.add_argument('-i', '--images')
     return parser
 
 
@@ -38,18 +39,24 @@ def get_collections_list():
 if __name__ == '__main__':
     parser = create_parser()
     args_namespace = parser.parse_args()
-    if args_namespace.get_collections_list:
+    if args_namespace.collections:
         for collection in get_collections_list():
             print(collection)
-    elif args_namespace.get_images:
-        collection = 'holiday_cards'
+    elif args_namespace.images:
         hubble_collections_url = 'http://hubblesite.org/api/v3/images/'
-        response = requests.get(f'{hubble_collections_url}{collection}').json()
-        collection_images_id = [image['id'] for image in response]
-        for prefix, image_id in enumerate(collection_images_id):
-            image_name = f'_{collection}_{prefix}'
-            print(f'fetching {image_name} ...')
-            fetch_hubble_image_by_id(image_id, image_name)
-            print('done')
+        response = requests.get(
+                f'{hubble_collections_url}{args_namespace.images}')
+        if response.json():
+            collection_images_id = [image['id'] for image in response.json()]
+            for prefix, image_id in enumerate(collection_images_id):
+                image_name = f'_{args_namespace.images}_{prefix}'
+                print(f'fetching {image_name} ...')
+                fetch_hubble_image_by_id(image_id, image_name)
+                print('done')
+        else:
+            print('Warning!\nReturned empty response.\n'
+                  'Possibly collection with name: '
+                  f'{args_namespace.images} doesnt exist')
+
     else:
-        print('You must import args')
+        print('You must input args')
