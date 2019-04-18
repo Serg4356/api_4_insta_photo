@@ -14,7 +14,8 @@ It is recommended to use virtual environment virtualenv/venv to isolate your pro
 $python fetch_spacex.py
 ```
 
-## Fetch image collection from hubblesite.org by name. This script provides simple console interface. In case you dont know wich collection to choose you can run script with -c argument, as can be seen below:
+## Fetch image collection from hubblesite.org by name. 
+This script provides simple console interface. In case you dont know wich collection to choose you can run script with -c argument, as can be seen below:
 ```
 $python fetch_hubble.py -c
 ```
