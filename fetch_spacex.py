@@ -4,13 +4,11 @@ import os
 
 def fetch_image(filename, url):
 	path = os.path.join(os.getcwd(), 'image')
-	try:
-		os.makedirs('image')
-	except FileExistsError:
-		pass
+	os.makedirs('image', exist_ok=True)
 	response = requests.get(url)
-	with open(os.path.join(path,filename), 'wb') as file:
-		file.write(response.content)
+	if response.ok:
+		with open(os.path.join(path,filename), 'wb') as file:
+			file.write(response.content)
 
 
 def fetch_spacex_last_launch():
@@ -18,7 +16,7 @@ def fetch_spacex_last_launch():
     launches = requests.get(url).json()
     launches.reverse()
     for launch in launches:
-        if not len(launch['links']['flickr_images']) == 0:
+        if launch['links']['flickr_images']:
             image_urls = launch['links']['flickr_images']
             break
     for image_number, image_url in enumerate(image_urls):

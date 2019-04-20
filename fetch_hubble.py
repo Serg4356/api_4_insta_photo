@@ -23,7 +23,8 @@ def fetch_hubble_image_by_id(id, prefix=''):
     hubble_url = 'http://hubblesite.org/api/v3/image/'
     response = requests.get(f'{hubble_url}{id}').json()
     hubble_images_urls = [param['file_url'] for param in response['image_files']]
-    extension = get_file_extension(hubble_images_urls[0])
+    print(hubble_images_urls[-1])
+    extension = get_file_extension(hubble_images_urls[-1])
     fetch_image(f'hubble{prefix}{extension}', hubble_images_urls[-1])
 
 
