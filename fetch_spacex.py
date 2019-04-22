@@ -3,12 +3,12 @@ import os
 
 
 def fetch_image(filename, url):
-	path = os.path.join(os.getcwd(), 'image')
-	os.makedirs('image', exist_ok=True)
-	response = requests.get(url)
-	if response.ok:
-		with open(os.path.join(path,filename), 'wb') as file:
-			file.write(response.content)
+    path = os.path.join(os.getcwd(), 'image')
+    os.makedirs('image', exist_ok=True)
+    response = requests.get(url)
+    response.raise_for_status()
+    with open(os.path.join(path,filename), 'wb') as file:
+        file.write(response.content)
 
 
 def fetch_spacex_last_launch():
@@ -21,8 +21,11 @@ def fetch_spacex_last_launch():
             break
     for image_number, image_url in enumerate(image_urls):
         print(f'fetching spacex{image_number}.jpg ...')
-        fetch_image(f'spacex{image_number}.jpg', image_url)
-        print('done')
+        try:
+            fetch_image(f'spacex{image_number}.jpg', image_url)
+            print('done')
+        except requests.exceptions.HTTPError:
+            print('An error occured while fetching image')
 
 
 if __name__ == '__main__':
